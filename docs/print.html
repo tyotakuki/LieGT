@@ -1,0 +1,912 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Documentation for LieGT</title>
+        <meta name="robots" content="noindex" />
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = null;
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="An/rootdata.html"><strong aria-hidden="true">2.</strong> Type An</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="An/gtbasis.html"><strong aria-hidden="true">2.1.</strong> Gelfand-Tsetlin Basis of Representations</a></li><li class="chapter-item expanded "><a href="An/repan.html"><strong aria-hidden="true">2.2.</strong> Representations of An</a></li><li class="chapter-item expanded "><a href="An/me.html"><strong aria-hidden="true">2.3.</strong> Matrix Element Formulas</a></li></ol></li><li class="chapter-item expanded "><a href="Cn/rootdata.html"><strong aria-hidden="true">3.</strong> Type Cn</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Cn/gtbasis.html"><strong aria-hidden="true">3.1.</strong> Gelfand-Tsetlin Basis of Representations</a></li><li class="chapter-item expanded "><a href="Cn/repcn.html"><strong aria-hidden="true">3.2.</strong> Representations of Cn</a></li><li class="chapter-item expanded "><a href="Cn/me.html"><strong aria-hidden="true">3.3.</strong> Matrix Element Formulas</a></li></ol></li><li class="chapter-item expanded "><a href="BnDn/rootdata.html"><strong aria-hidden="true">4.</strong> Type Bn and Dn</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="BnDn/gtbasis.html"><strong aria-hidden="true">4.1.</strong> Gelfand-Tsetlin Basis of Representations</a></li><li class="chapter-item expanded "><a href="BnDn/repbdn.html"><strong aria-hidden="true">4.2.</strong> Representations of Bn and Dn</a></li><li class="chapter-item expanded "><a href="BnDn/me.html"><strong aria-hidden="true">4.3.</strong> Matrix Element Formulas</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Documentation for LieGT</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>This Python package is made the following purposes:</p>
+<ul>
+<li>Computes the root data for classical Lie algebra.</li>
+<li>Computes the Gelfand-Tsetlin basis for finite dimensional representations.</li>
+<li>Computing the matrix elements for finite dimensional representations.</li>
+</ul>
+<p>This package requires <code>sympy</code>.</p>
+<h2 id="reference"><a class="header" href="#reference">Reference</a></h2>
+<h3 id="gelfand-tsetlin-basis-and-matrix-elements"><a class="header" href="#gelfand-tsetlin-basis-and-matrix-elements">Gelfand-Tsetlin Basis and Matrix Elements</a></h3>
+<ul>
+<li>Gelfand, Israel M., and Michael L. Tsetlin. <em>Finite-dimensional representations of the group of unimodular matrices.</em> Dokl. Akad. Nauk SSSR. Vol. 71. No. 8. 1950.</li>
+<li>Gelfand, I. M., and M. L. Zetlin. <em>Finite-dimensional representations of the orthogonal group.</em> Math. USSR Doklady. Vol. 71. 1950.</li>
+<li>Molev, A. I. <em>A basis for representations of symplectic Lie algebras.</em> Communications in mathematical physics 201 (1999): 591-618.</li>
+<li>Molev, Alexander I. <em>A weight basis for representations of even orthogonal Lie algebras.</em> Combinatorial Methods in Representation Theory. Vol. 28. Mathematical Society of Japan, 2000. 221-241.</li>
+<li>Molev, Alexander I. &quot;Gelfand-Tsetlin bases for classical Lie algebras.&quot; arXiv preprint math/0211289 (2002).</li>
+</ul>
+<h3 id="structural-constants-of-lie-algebra"><a class="header" href="#structural-constants-of-lie-algebra">Structural Constants of Lie Algebra</a></h3>
+<ul>
+<li>Cohen, Arjeh, Scott Murray, and Don Taylor. <em>Computing in groups of Lie type.</em> Mathematics of computation 73.247 (2004): 1477-1498.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="type-an"><a class="header" href="#type-an">Type An</a></h1>
+<pre><code class="language-python">class an.RootDatAn(n)
+</code></pre>
+<p>Creates the root data object for \(A_n\).</p>
+<pre><code class="language-python">an.RootDatAn.rank
+</code></pre>
+<p>The rank of the root system.</p>
+<pre><code class="language-python">an.RootDatAn.roots
+</code></pre>
+<p>The list of roots of \(A_n\) in the usual basis \(e_i - e_j\) for \(i\neq j\). Roots are stored as <code>sympy.Matrix</code> objects.</p>
+<pre><code class="language-python">an.RootDatAn.simple_roots 
+</code></pre>
+<p>The list of simple roots of \(A_n\) in the usual basis \(e_i - e_{i+1}\) for \(1\leq i \leq n\). </p>
+<pre><code>an.RootDatAn.coroots 
+</code></pre>
+<p>Returns the list of coroots \(\check\alpha = \frac{2\alpha}{\langle\alpha,\alpha\rangle}\)of \(A_n\) in the usual basis.</p>
+<pre><code>an.RootDatAn.simple_coroots 
+</code></pre>
+<p>Returns the list of simple coroots in the usual basis.</p>
+<pre><code>an.RootDatAn.cartan_matrix 
+</code></pre>
+<p>Returns the Cartan matrix.</p>
+<pre><code>an.RootDatAn.fundamental_weights 
+</code></pre>
+<p>Returns the list of fundamental weights. Fundamental weights are stored as <code>sympy.Matrix</code> objects.</p>
+<pre><code>an.RootDatAn.root_strings 
+</code></pre>
+<p>Returns the list of roots in the fundamental weight basis. They are stored as lists with integer entries.</p>
+<pre><code>an.RootDatAn.positive_root_strings 
+</code></pre>
+<p>Returns the list of positive roots in the fundamental weight basis. They are stored as lists with integer entries.</p>
+<pre><code>an.RootDatAn.highest_root_string 
+</code></pre>
+<p>Returns highest root in the fundamental weight basis.</p>
+<pre><code>an.RootDatAn.highest_root 
+</code></pre>
+<p>Returns the highest root in the usual basis.</p>
+<pre><code>an.RootDatAn.root_order 
+</code></pre>
+<p>Returns the dictionary of a lexiographic order of roots. Roots are stored as tuples.</p>
+<pre><code>an.RootDatAn.positive_root_order 
+</code></pre>
+<p>Returns the dictionary of a lexiographic order of positive roots. Roots are stored as tuples.</p>
+<pre><code>an.RootDatAn.get_p(root_string_alpha, root_string_beta)
+</code></pre>
+<p>Returns the greatest positive integer \(p_{\alpha,\beta}\) such that \(\beta-p\alpha\) is a root.</p>
+<pre><code>an.RootDatAn.get_epsilon(alpha, beta)
+</code></pre>
+<p>Returns a choice of \(\epsilon_{\alpha,\beta}=\pm 1\) in the commutation relation \([E_\alpha, E_\beta]=\epsilon_{\alpha,\beta}(p_{\alpha,\beta}+1)E_{\alpha+\beta}\) of the Chevalley basis.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="gelfand-tsetlin-basis-of-type-an"><a class="header" href="#gelfand-tsetlin-basis-of-type-an">Gelfand-Tsetlin Basis of Type An</a></h1>
+<p>A Gelfand-Tsetlin pattern for type \(A_{n-1}\) is a pyramid of (nonnegative) integers
+\[\begin{array}{ccccccc}
+\lambda_{n,1} &amp;  &amp; \lambda_{n,2} &amp;  &amp; \ldots &amp;  &amp; \lambda_{n,n}\\
+&amp; \lambda_{n-1,1} &amp;  &amp; \ldots &amp;  &amp; \lambda_{n-1,n-1}\\
+&amp;  &amp; \ldots &amp;  &amp; \ldots\\
+&amp;  &amp; \lambda_{2,1} &amp;  &amp; \lambda_{2,2}\\
+&amp;  &amp;  &amp; \lambda_{1.1}
+\end{array}\]
+that satisfies the <em>interlacing relation</em>
+\[\lambda_{k,i} \geq \lambda_{k-1,i} \geq \lambda_{k,i+1}.\]
+The Gelfand-Tsetlin pattern records the branching of an irreducible representation with highest weight (as a partition)\[\lambda =(\lambda_{n,1}, \lambda_{n,2} ,\ldots,\lambda_{n,n} )\] along the chain of subgroups \[GL(n)\supset GL(n-1)\supset\ldots\supset GL(1).\]</p>
+<pre><code class="language-python">class an.GTPattern(GT_pattern_as_list)
+</code></pre>
+<p>A Gelfand-Tsetlin pattern is usually stored as a list of rows. We can also use the class <code>GTPattern</code> to create a Gelfand-Tsetlin pattern object for convenience. The pattern is stored in the attribute <code>an.GTPattern.pattern</code> as a list. For example:</p>
+<pre><code>&gt; b = GTPattern([[3, 2, 1], [2, 1], [1]])
+&gt; print(b.pattern)
+
+[[3, 2, 1], [2, 1], [1]]
+</code></pre>
+<pre><code>an.GTPattern.get_lambda(k, i)
+</code></pre>
+<p>Returns the entry \(\lambda_{k,i}\) for each pattern object.</p>
+<pre><code>an.GTPattern.get_l(k, i)
+</code></pre>
+<p>Returns the value of \(l_{k,i} = \lambda_{k,i} - i +1\) for each pattern object.</p>
+<pre><code>an.GTPattern.raise_pattern(k, i)
+an.GTPattern.lower_pattern(k, i)
+</code></pre>
+<p>Raise/lower the entry \(\lambda_{k,i}\) pattern object by 1, respectively. <strong>Caution:</strong> These two methods do not have return values and will modify the original instance of <code>GTPattern</code>.</p>
+<pre><code>an.GTPattern.raised(k, i)
+an.GTPattern.lowered(k, i)
+</code></pre>
+<p>Return new <code>GTPattern</code> objects with the entry \(\lambda_{k,i}\) raised/lowered by 1, respectively.</p>
+<p><strong>Caution:</strong> The methods provided in this class do not check the interlacing condition. The user will have to provide their own method for that purpose.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="representations-of-an"><a class="header" href="#representations-of-an">Representations of An</a></h1>
+<pre><code>class an.RepAn(highest_weight)
+</code></pre>
+<p>Creates the representation object with highest weight <code>highest_weight</code>.</p>
+<pre><code>an.RepAn.highest_weight
+</code></pre>
+<p>The highest weight of a representation object.</p>
+<pre><code>an.RepAn.root_data
+</code></pre>
+<p>An instance of <code>RootDatAn</code> which stores the root datum of the Lie algebra.</p>
+<pre><code>an.RepAn.Gelfand_Tsetlin_patterns
+</code></pre>
+<p>The list of all Gelfand-Tsetlin patterns (as lists) for this representation.</p>
+<pre><code>an.RepAn.patterns
+</code></pre>
+<p>The list of all Gelfand-Tsetlin patterns (as <code>GTPattern</code> objects) for this representation.</p>
+<pre><code>an.RepAn.get_root_vector(root, normalization = 'rational')
+</code></pre>
+<p>Returns the root vector \(E_{\alpha}\) in a Chevalley basis cooresponding to the root \(\alpha\). The root \(\alpha\) needs to be represented as a list of integer coefficients in the simple root basis. The option <code>normalization = 'rational'</code> will make the entries of root vectors rational, while the option <code>normalization = 'unitary'</code> will make the representation restricted on the maximal compact subgroup \(U(n)\) (realized as unitary matrices in \(GL(n,\mathbb{C})\)) unitary. The computed root vectors are stored in the dictionary <code>an.RepAn.root_vectors_rational</code> and <code>an.RepAn.root_vectors_unitary</code>, respectively.</p>
+<p>For example,</p>
+<pre><code class="language-python">&gt; b = RepAn([3,2,1])
+&gt; [b.get_root_vector(x, normalization='rational') for x in b.root_data.positive_root_strings]
+
+[Matrix([
+ [0, 1, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 2, 0, 0, 0],
+ [0, 0, 0, 0, 0, 2, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 1],
+ [0, 0, 0, 0, 0, 0, 0, 0]]),
+ Matrix([
+ [0, 0,   0, 3/2,   0, 0, 0, 0],
+ [0, 0, 3/2,   0, 3/2, 0, 0, 0],
+ [0, 0,   0,   0,   0, 0, 3, 0],
+ [0, 0,   0,   0,   0, 0, 0, 0],
+ [0, 0,   0,   0,   0, 0, 1, 0],
+ [0, 0,   0,   0,   0, 0, 0, 1],
+ [0, 0,   0,   0,   0, 0, 0, 0],
+ [0, 0,   0,   0,   0, 0, 0, 0]]),
+ Matrix([
+ [0, 0, 3/2, 0, -3/2,  0, 0,  0],
+ [0, 0,   0, 0,    0, -3, 0,  0],
+ [0, 0,   0, 0,    0,  0, 0, -3],
+ [0, 0,   0, 0,    0,  0, 2,  0],
+ [0, 0,   0, 0,    0,  0, 0,  1],
+ [0, 0,   0, 0,    0,  0, 0,  0],
+ [0, 0,   0, 0,    0,  0, 0,  0],
+ [0, 0,   0, 0,    0,  0, 0,  0]])]
+</code></pre>
+<p>The transformation matrix from the rational form to the unitary representation is diagonal, and the diagonal elements can be computed with the method</p>
+<pre><code class="language-python">an.RepAn.unitarization()
+</code></pre>
+<p>The result of the computation is stored in the attribute <code>an.RepAn.unitarization_matrix</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="matrix-element-formulas"><a class="header" href="#matrix-element-formulas">Matrix Element Formulas</a></h1>
+<p>The rational matrix element formulas are based on the formula given in:</p>
+<ul>
+<li>Gelfand, Israel M., and Michael L. Tsetlin. <em>Finite-dimensional representations of the group of unimodular matrices.</em> Dokl. Akad. Nauk SSSR. Vol. 71. No. 8. 1950.</li>
+<li>Molev, Alexander I. &quot;Gelfand-Tsetlin bases for classical Lie algebras.&quot; arXiv preprint math/0211289 (2002).</li>
+</ul>
+<p>Let \(E_{i,j}\) be the element in \(GL(n,\mathbb{C})\) with the \((i,j)\)-th entry equal to 1 and the rest equal to 0, the action of the generators of \(GL(n,\mathbb{C})\) on the Gelfand-Tsetlin basis elements \(v_\Lambda\) is given by:
+\[
+E_{k,k}v_{\Lambda}=\left(\sum_{i=1}^{k}\lambda_{k,i}-\sum_{i=1}^{k-1}\lambda_{k-1,i}\right)v_{\Lambda}
+\]
+\[
+E_{k,k+1}v_{\Lambda}=-\sum_{i=1}^{k}\frac{\prod_{r=1}^{k+1}\left(l_{k,i}-l_{k+1,r}\right)}{\prod_{r=1,r\neq i}^{k}\left(l_{k,i}-l_{k,r}\right)}v_{\Lambda_{k,i}^{+}}
+\]
+\[
+E_{k+1,k}v_{\Lambda}=\sum_{i=1}^{k}\frac{\prod_{r=1}^{k-1}\left(l_{k,i}-l_{k-1,r}\right)}{\prod_{r=1,r\neq i}^{k}\left(l_{k,i}-l_{k,r}\right)}v_{\Lambda_{k,i}^{-}}
+\]
+It is possible to normalize the basis elements such that the restriction of the action to \(U(n)\subset GL(n,\mathbb{C})\) is unitary. The actions are thus given by:
+\[
+E_{k,k+1}w_{\Lambda}=i\sum_{i=1}^{k}\sqrt{\frac{\prod_{r=1}^{k+1}\left(l_{k+1,r}-l_{k,i}\right)\prod_{r=1}^{k-1}\left(l_{k-1,r}-l_{k,i}-1\right)}{\prod_{r=1,r\neq i}^{k}\left(l_{k,r}-l_{k,i}\right)\left(l_{k,r}-l_{k,i}-1\right)}}w_{\Lambda_{k,i}^{+}}
+\]
+\[
+E_{k+1,k}w_{\Lambda}=i\sum_{i=1}^{k}\sqrt{\frac{\prod_{r=1}^{k+1}\left(l_{k+1,r}-l_{k,i}+1\right)\prod_{r=1}^{k-1}\left(l_{k-1,r}-l_{k,i}\right)}{\prod_{r=1,r\neq i}^{k}\left(l_{k,r}-l_{k,i}+1\right)\left(l_{k,r}-l_{k,i}\right)}}w_{\Lambda_{k,i}^{+}}
+\]</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="type-cn"><a class="header" href="#type-cn">Type Cn</a></h1>
+<pre><code class="language-python">class cn.RootDatCn(n)
+</code></pre>
+<p>Creates the root data object for \(C_n\).</p>
+<pre><code class="language-python">cn.RootDatCn.rank
+</code></pre>
+<p>The rank of the root system.</p>
+<pre><code class="language-python">cn.RootDatCn.roots
+</code></pre>
+<p>The list of roots of \(C_n\) in the usual basis \(\pm e_i \pm e_j\) for \(i\neq j\) and \(2e_i\) for \(1\leq i\leq n\). Roots are stored as <code>sympy.Matrix</code> objects.</p>
+<pre><code class="language-python">cn.RootDatCn.simple_roots 
+</code></pre>
+<p>The list of simple roots of \(C_n\) in the usual basis \(e_i - e_{i+1}\) for \(1\leq i \leq n-1\) and \(2e_n\). </p>
+<pre><code>cn.RootDatCn.coroots 
+</code></pre>
+<p>Returns the list of coroots \(\check\alpha = \frac{2\alpha}{\langle\alpha,\alpha\rangle}\)of \(C_n\) in the usual basis.</p>
+<pre><code>cn.RootDatCn.simple_coroots 
+</code></pre>
+<p>Returns the list of simple coroots in the usual basis.</p>
+<pre><code>cn.RootDatCn.cartan_matrix 
+</code></pre>
+<p>Returns the Cartan matrix.</p>
+<pre><code>cn.RootDatCn.fundamental_weights 
+</code></pre>
+<p>Returns the list of fundamental weights. Fundamental weights are stored as <code>sympy.Matrix</code> objects.</p>
+<pre><code>cn.RootDatCn.root_strings 
+</code></pre>
+<p>Returns the list of roots in the fundamental weight basis. They are stored as lists with integer entries.</p>
+<pre><code>cn.RootDatCn.positive_root_strings 
+</code></pre>
+<p>Returns the list of positive roots in the fundamental weight basis. They are stored as lists with integer entries.</p>
+<pre><code>cn.RootDatCn.highest_root_string 
+</code></pre>
+<p>Returns highest root in the fundamental weight basis.</p>
+<pre><code>cn.RootDatCn.highest_root 
+</code></pre>
+<p>Returns the highest root in the usual basis.</p>
+<pre><code>cn.RootDatCn.root_order 
+</code></pre>
+<p>Returns the dictionary of a lexiographic order of roots. Roots are stored as tuples.</p>
+<pre><code>cn.RootDatCn.positive_root_order 
+</code></pre>
+<p>Returns the dictionary of a lexiographic order of positive roots. Roots are stored as tuples.</p>
+<pre><code>cn.RootDatCn.get_p(root_string_alpha, root_string_beta)
+</code></pre>
+<p>Returns the greatest positive integer \(p_{\alpha,\beta}\) such that \(\beta-p\alpha\) is a root.</p>
+<pre><code>cn.RootDatCn.get_epsilon(alpha, beta)
+</code></pre>
+<p>Returns a choice of \(\epsilon_{\alpha,\beta}=\pm 1\) in the commutation relation \([E_\alpha, E_\beta]=\epsilon_{\alpha,\beta}(p_{\alpha,\beta}+1)E_{\alpha+\beta}\) of the Chevalley basis.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="gelfand-tsetlin-basis-of-representations"><a class="header" href="#gelfand-tsetlin-basis-of-representations">Gelfand-Tsetlin Basis of Representations</a></h1>
+<p>A Gelfand-Tsetlin pattern of type \(C_n\) is a pyramid of nonnegative integers
+\[
+\begin{array}{cccccccccc}
+\lambda_{n,1} &amp;  &amp; \lambda_{n,2} &amp;  &amp; \lambda_{n,3} &amp;  &amp; \ldots &amp;  &amp; \lambda_{n,n}\\
+&amp; \lambda_{n,1}' &amp;  &amp; \lambda_{n,2}' &amp;  &amp; \lambda_{n,3}' &amp;  &amp; \ldots &amp;  &amp; \lambda_{n,n}'\\
+&amp;  &amp; \lambda_{n-1,1} &amp;  &amp; \lambda_{n-1,2} &amp;  &amp;  &amp;  &amp; \lambda_{n-1,n-1}\\
+&amp;  &amp;  &amp; \lambda_{n-1.1}' &amp;  &amp; \lambda_{n-1,2}' &amp;  &amp; \ldots &amp;  &amp; \lambda_{n-1.n-1}'\\
+&amp;  &amp;  &amp;  &amp;  &amp; \ldots &amp;  &amp;  &amp; \ldots\\
+&amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp; \lambda_{1,1}\\
+&amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp; \lambda_{1,1}'
+\end{array}
+\]
+satisfying the <em>interlacing condition</em></p>
+<p>\[
+\lambda_{k,1}
+\geq\lambda_{k,1}^{\prime}
+\geq\lambda_{k,2}
+\geq\lambda_{k,2}^{\prime}
+\geq\ldots
+\geq\lambda_{k,k}
+\geq\lambda_{k,k}^{\prime}
+\geq 0
+\]
+and
+\[
+\lambda_{k,1}^{\prime}
+\geq\lambda_{k-1,1}
+\geq\lambda_{k,2}^{\prime}
+\geq\lambda_{k-1,2}
+\geq\ldots
+\geq\lambda_{k-1,k-1}
+\geq\lambda_{k,k}^{\prime}
+\geq 0
+\]
+In</p>
+<ul>
+<li>Molev, A. I. &quot;A basis for representations of symplectic Lie algebras.&quot; Communications in mathematical physics 201 (1999): 591-618</li>
+</ul>
+<p>for the sake of convenience, a Gelfand-Tsetlin pattern of \(C_n\) are modified to be the following pyramid of nonpositive integers:
+\[
+\begin{array}{cccccccccc}
+&amp; \lambda_{n,1} &amp;  &amp; \lambda_{n,2} &amp;  &amp; \lambda_{n,3} &amp;  &amp; \ldots &amp;  &amp; \lambda_{n,n}\\
+\lambda_{n,1}' &amp;  &amp; \lambda_{n,2}' &amp;  &amp; \lambda_{n,3}' &amp;  &amp; \ldots &amp;  &amp; \lambda_{n,n}'\\
+&amp; \lambda_{n-1,1} &amp;  &amp; \lambda_{n-1,2} &amp;  &amp;  &amp;  &amp; \lambda_{n-1,n-1}\\
+\lambda_{n-1.1}' &amp;  &amp; \lambda_{n-1,2}' &amp;  &amp; \ldots &amp;  &amp; \lambda_{n-1.n-1}'\\
+&amp;  &amp; \ldots &amp;  &amp;  &amp; \ldots\\
+&amp; \lambda_{1,1}\\
+\lambda_{1,1}'
+\end{array}
+\]
+and the corresponding interlacing relation is
+\[
+0 \geq \lambda_{k,1}
+\geq\lambda_{k,1}^{\prime}
+\geq\lambda_{k,2}
+\geq\lambda_{k,2}^{\prime}
+\geq\ldots
+\geq\lambda_{k,k}
+\geq\lambda_{k,k}^{\prime}
+\]
+and
+\[
+0 \geq\lambda_{k,1}^{\prime}
+\geq\lambda_{k-1,1}
+\geq\lambda_{k,2}^{\prime}
+\geq\lambda_{k-1,2}
+\geq\ldots
+\geq\lambda_{k-1,k-1}
+\geq\lambda_{k,k}^{\prime}
+\]
+instead. In the class <code>class GTPattern(GT_pattern_as_list)</code>, the methods are presumed to be handling the Molev convention of the Gelfand-Tsetlin patterns. The rows represented by \(\lambda_{k,l}^{\prime}\) are called <em>auxillary rows</em> and they represent the multiplicity space of the branching along the chain of subgroups
+\[
+Sp(2n,\mathbb{C}) \supset Sp(2n-2,\mathbb{C}) \ldots Sp(2,\mathbb{C})
+\]
+The following methods, similar to their counterparts for the \[A_n\] case, are provided to handle the raising and lowering operation on Gelfand-Tsetlin patterns. </p>
+<pre><code class="language-python">cn.GTPattern.raise_pattern(k,i)
+cn.GTPattern.lower_pattern(k,i)
+cn.GTPattern.raised(k,i)
+cn.GTPattern.lowered(k,i)
+cn.GTPattern.raise_aux_pattern(k,i)
+cn.GTPattern.lower_aux_pattern(k,i)
+cn.GTPattern.raised_aux(k,i)
+cn.GTPattern.lowered_aux(k,i)
+cn.GTPattern.get_lambda(k,i)
+cn.GTPattern.get_lambda_aux(k,i)
+cn.GTPattern.get_l(k,i)
+cn.GTPattern.get_l_aux(k,i)
+</code></pre>
+<p>In the \(C_n\) case, \(l_{k,i}\) is given by \(l_{k,i} = \lambda_{k,i} - i\).</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="representations-of-cn"><a class="header" href="#representations-of-cn">Representations of Cn</a></h1>
+<pre><code>class cn.RepCn(highest_weight)
+</code></pre>
+<p>Creates the representation object with highest weight <code>highest_weight</code>.</p>
+<pre><code>cn.RepCn.highest_weight
+</code></pre>
+<p>The highest weight of a representation object.</p>
+<pre><code>cn.RepCn.root_data
+</code></pre>
+<p>Cn instance of <code>RootDatCn</code> which stores the root datum of the Lie algebra.</p>
+<pre><code>cn.RepCn.Gelfand_Tsetlin_patterns
+</code></pre>
+<p>The list of all Gelfand-Tsetlin patterns (as lists) for this representation.</p>
+<pre><code>cn.RepCn.patterns
+</code></pre>
+<p>The list of all Gelfand-Tsetlin patterns (as <code>GTPattern</code> objects) for this representation.</p>
+<pre><code>cn.RepCn.get_root_vector(root)
+</code></pre>
+<p>Returns the root vector \(X_{\alpha}\) in a Chevalley basis cooresponding to the root \(\alpha\). The root \(\alpha\) needs to be represented as a list of integer coefficients in the simple root basis. The matrix entries are rational numbers, and the computed root vectors are stored in the dictionary <code>cn.RepCn.root_vectors</code>.</p>
+<p>For example,</p>
+<pre><code class="language-python">&gt; b = RepCn([1,1,0])
+&gt; [b.get_root_vector(x) for x in b.root_data.positive_root_strings]
+
+[Matrix([
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, -1/4,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0, -1/4,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0, -1/4,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0, -1/4, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0,    0,    0,    0,    0, 0]]),
+ Matrix([
+ [0, 0,    0,    0,    0, 8, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 8, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 0, 0,    2, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0, -1/4,    0,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0, -1/4,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0, -1/4, 0, 0, 0,    0, 0, 0, 0, 0, 9/2],
+ [0, 0,    0,    0,    0, 0, 0, 0,    0, 0, 0, 0, 0,   0],
+ [0, 0,    0,    0,    0, 0, 0, 0, -1/3, 0, 0, 0, 0,   0]]),
+ Matrix([
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 2, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0, -1, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0, -2, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 1, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0, -2, 0, 0, 0],
+ [0,  0, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0]]),
+ Matrix([
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 2, 0, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 2, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0,   1/2,    0],
+ [0, 0, 1/16,    0,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0, 1/16,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0,    0, 1/16, 0, 0, 0, 0, 0, 0, 0,     0, -9/8],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0,     0,    0],
+ [0, 0,    0,    0,    0, 0, 0, 0, 0, 0, 0, 0, -1/12,    0]]),
+ Matrix([
+ [0,   0, 0,    0,    0, 0,   0, 8,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0,   0, 0, -4, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0,   4, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0, -1/4, 0,   0, 0,  0, 0, 0, 0, 0, -9/2],
+ [0,   0, 0,    0,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0, 1/4, 0,    0,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0, -1/2,    0, 0,   0, 0,  0, 0, 0, 0, 0,    0],
+ [0,   0, 0,    0,    0, 0, 2/3, 0,  0, 0, 0, 0, 0,    0]]),
+ Matrix([
+ [0, 0, 1/2,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0, 1/2, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0, -1/4, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0, -1/4, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0],
+ [0, 0,   0,   0, 0, 0, 0, 0,    0, 0, 0, 0,    0, 0]]),
+ Matrix([
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 2,  0,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0, -1,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   1, 0,  0,   0],
+ [0,     0, 0,   0, 1/16, 0, 0, 0, 0, 0,   0, 0,  0, 9/8],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0, -1/16, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0,     0, 0, 1/8,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0,   0, 0,  0,   0],
+ [0,     0, 0,   0,    0, 0, 0, 0, 0, 0, 1/6, 0,  0,   0]]),
+ Matrix([
+ [0, 0, 0,   0, 1, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0, 1/2, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0, 1/4, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0, 1/2, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0, 1/4, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0, 1/2, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0],
+ [0, 0, 0,   0, 0, 0,   0, 0,   0, 0,   0, 0,   0, 0]]),
+ Matrix([
+ [0, 1/2, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0, 1/2, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0, 1/2, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0, 1/2, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0],
+ [0,   0, 0,   0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0]])]
+
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="matrix-element-formulas-1"><a class="header" href="#matrix-element-formulas-1">Matrix Element Formulas</a></h1>
+<p>The formula provided in Theorem 1.1 of</p>
+<ul>
+<li>Molev, A. I. &quot;A basis for representations of symplectic Lie algebras.&quot; Communications in mathematical physics 201 (1999): 591-618</li>
+</ul>
+<p>gave the actions of the generators \(F_{i,j} = E_{i,j} - \left(\mathrm{sgn}i\cdot \mathrm{sgn}j\right) E_{-j,-i}\). The matrices are indexed by \(-n, -n+1, \ldots, -1,1,\ldots,n\).</p>
+<p>\[
+F_{kk}\zeta_{\Lambda}=\left(2\sum_{i=1}^{k}\lambda_{ki}^{\prime}-\sum_{i=1}^{k}\lambda_{ki}-\sum_{i=1}^{k-1}\lambda_{k-1,i}\right)\zeta_{\Lambda}
+\]
+\[
+F_{k,-k}\zeta_{\Lambda}=\sum_{i=1}^{k}A_{ki}(\Lambda)\zeta_{\Lambda+\delta_{ki}^{\prime}}
+\]
+\[
+F_{-k,k}\zeta_{\Lambda}=\sum_{i=1}^{k}B_{ki}(\Lambda)\zeta_{\Lambda-\delta_{ki}^{\prime}}
+\]
+\[
+F_{k-1,-k}\zeta_{\Lambda}=\sum_{i=1}^{k-1}C_{ki}(\Lambda)\zeta_{\Lambda-\delta_{k-1,i}}+\sum_{i=1}^{k}\sum_{j,m=1}^{k-1}D_{kijm}(\Lambda)\zeta_{\Lambda+\delta_{ki}^{\prime}+\delta_{k-1,j}+\delta_{k-1,m}^{\prime}}
+\]
+with the coefficients
+\[
+A_{ki}(\Lambda)=\prod_{a=1,a\neq i}^{k}\frac{1}{l_{ka}^{\prime}-l_{ki}^{\prime}}
+\]
+\[
+B_{ki}(\Lambda)=4A_{ki}(\Lambda)l_{ki}^{\prime}\prod_{a=1}^{k}\left(l_{ka}-l_{ki}^{\prime}\right)\prod_{a=1}^{k-1}\left(l_{k-1,a}-l_{k,i}^{\prime}\right)
+\]
+\[
+C_{ki}(\Lambda)=\frac{1}{2l_{k-1,i}}\prod_{a=1,a\neq i}^{k-1}\frac{1}{l_{k-1,i}^{2}-l_{k-1,a}^{2}}
+\]
+\[
+\begin{array}{ll}
+D_{kijm}(\Lambda)&amp; =A_{ki}(\Lambda)A_{k-1,m}(\Lambda)C_{kj}(\Lambda)\times \\
+&amp;\prod_{a=1,a\neq i}^{k}\left(l_{k-1,j}-l_{ka}^{\prime}\right)\left(l_{k-1,j}+l_{ka}^{\prime}+1\right)\prod_{a=1,a\neq m}^{k-1}\left(l_{k-1,j}-l_{k-1,a}^{\prime}\right)\left(l_{k-1,j}+l_{k-1,a}^{\prime}+1\right)
+\end{array}
+\]</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="type-bn-and-dn"><a class="header" href="#type-bn-and-dn">Type Bn and Dn</a></h1>
+<pre><code class="language-python">class bn.RootDatBn(n)
+class dn.RootDatDn(n)
+</code></pre>
+<p>Creates the root data object for \(B_n\) and \(D_n\).</p>
+<pre><code class="language-python">bn.RootDatBn.rank
+dn.RootDatDn.rank
+</code></pre>
+<p>The rank of the root system.</p>
+<pre><code class="language-python">bn.RootDatBn.roots
+dn.RootDatDn.roots
+</code></pre>
+<p>The list of roots of \(B_n\) in the usual basis \(e_i - e_j\) for \(i\neq j\) and \(e_i\) for \(1\leq i\leq n\). Roots are stored as <code>sympy.Matrix</code> objects.</p>
+<p>The list of roots of \(D_n\) in the usual basis \(e_i - e_j\) for \(i\neq j\) and \(e_i + e_j\) for \(1\leq i\leq n\). Roots are stored as <code>sympy.Matrix</code> objects.</p>
+<pre><code class="language-python">bn.RootDatBn.simple_roots 
+dn.RootDatDn.simple_roots 
+</code></pre>
+<p>The list of simple roots of \(B_n\) in the usual basis \(e_i - e_{i+1}\) for \(1\leq i \leq n-1\) and \(e_n\). 
+The list of simple roots of \(D_n\) in the usual basis \(e_i - e_{i+1}\) for \(1\leq i \leq n-1\) and \(e_{n-1}+e_n\). </p>
+<pre><code>bn.RootDatBn.coroots
+dn.RootDatDn.coroots 
+</code></pre>
+<p>Returns the list of coroots \(\check\alpha = \frac{2\alpha}{\langle\alpha,\alpha\rangle}\)of \(B_n\) and \(D_n\) in the usual basis.</p>
+<pre><code>bn.RootDatBn.simple_coroots 
+dn.RootDatDn.simple_coroots 
+</code></pre>
+<p>Returns the list of simple coroots in the usual basis.</p>
+<pre><code>bn.RootDatBn.cartan_matrix 
+dn.RootDatDn.cartan_matrix 
+</code></pre>
+<p>Returns the Cartan matrix.</p>
+<pre><code>bn.RootDatBn.fundamental_weights 
+dn.RootDatDn.fundamental_weights 
+</code></pre>
+<p>Returns the list of fundamental weights. Fundamental weights are stored as <code>sympy.Matrix</code> objects.</p>
+<pre><code>bn.RootDatBn.root_strings 
+dn.RootDatDn.root_strings 
+</code></pre>
+<p>Returns the list of roots in the fundamental weight basis. They are stored as lists with integer entries.</p>
+<pre><code>bn.RootDatBn.positive_root_strings 
+dn.RootDatDn.positive_root_strings 
+</code></pre>
+<p>Returns the list of positive roots in the fundamental weight basis. They are stored as lists with integer entries.</p>
+<pre><code>bn.RootDatBn.highest_root_string 
+dn.RootDatDn.highest_root_string 
+</code></pre>
+<p>Returns highest root in the fundamental weight basis.</p>
+<pre><code>bn.RootDatBn.highest_root 
+dn.RootDatDn.highest_root 
+</code></pre>
+<p>Returns the highest root in the usual basis.</p>
+<pre><code>bn.RootDatBn.root_order 
+dn.RootDatDn.root_order 
+</code></pre>
+<p>Returns the dictionary of a lexiographic order of roots. Roots are stored as tuples.</p>
+<pre><code>bn.RootDatBn.positive_root_order 
+dn.RootDatDn.positive_root_order 
+</code></pre>
+<p>Returns the dictionary of a lexiographic order of positive roots. Roots are stored as tuples.</p>
+<pre><code>bn.RootDatBn.get_p(root_string_alpha, root_string_beta)
+dn.RootDatDn.get_p(root_string_alpha, root_string_beta)
+</code></pre>
+<p>Returns the greatest positive integer \(p_{\alpha,\beta}\) such that \(\beta-p\alpha\) is a root.</p>
+<pre><code>bn.RootDatBn.get_epsilon(alpha, beta)
+dn.RootDatDn.get_epsilon(alpha, beta)
+</code></pre>
+<p>Returns a choice of \(\epsilon_{\alpha,\beta}=\pm 1\) in the commutation relation \([E_\alpha, E_\beta]=\epsilon_{\alpha,\beta}(p_{\alpha,\beta}+1)E_{\alpha+\beta}\) of the Chevalley basis.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="gelfand-tsetlin-basis-of-bn-and-dn-representations"><a class="header" href="#gelfand-tsetlin-basis-of-bn-and-dn-representations">Gelfand-Tsetlin Basis of Bn and Dn Representations</a></h1>
+<h2 id="gelfand-tsetlin-patterns-for-type-bn"><a class="header" href="#gelfand-tsetlin-patterns-for-type-bn">Gelfand-Tsetlin Patterns for Type Bn</a></h2>
+<p>A Gelfand-Tsetlin pattern for type \(B_n\) is a pyramid of either all nonnegative integers or all half-integers
+\[
+\begin{array}{cccccccc}
+\lambda_{n,1} &amp;  &amp; \lambda_{n,2} &amp;  &amp; \ldots &amp;  &amp; \lambda_{n,n}\\
+&amp; \lambda_{n,1}^\prime &amp;  &amp; \lambda_{n,2}^\prime &amp;  &amp; \ldots &amp;  &amp; \lambda_{n,n}^\prime\\
+&amp;  &amp; \lambda_{n-1,1} &amp;  &amp; \ldots &amp;  &amp; \lambda_{n-1,n-1}\\
+&amp;  &amp;  &amp; \lambda_{n-1,1}^\prime &amp;  &amp; \ldots &amp;  &amp; \lambda_{n-1,n-1}^\prime\\
+&amp;  &amp;  &amp;  &amp;  &amp;  &amp; \ldots\\
+&amp;  &amp;  &amp;  &amp;  &amp;  &amp; \lambda_{1,1}\\
+&amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp; \lambda_{1,1}^\prime
+\end{array}
+\]
+satisfying the interlacing conditions
+\[
+\lambda_{k,1}\geq \lambda_{k,1}^\prime \geq \lambda_{k,2}\geq \lambda_{k,2}^\prime \geq \ldots\geq \lambda_{k,k-1}^\prime\geq \lambda_{k,k} \geq \left|\lambda_{k,k}^\prime\right|
+\]
+and
+\[
+\lambda_{k,1}^\prime\geq \lambda_{k-1,1} \geq \lambda_{k,2}^\prime\geq \lambda_{k-1,2} \geq \ldots\geq \lambda_{k,k-1}^\prime\geq \lambda_{k-1,k-1} \geq \left|\lambda_{k,k}^\prime\right|.
+\]
+In Molev, Gelfand-Tsetlin patterns with negative entries and rows in decreasing order was used. However, we will not be following their convention.</p>
+<h2 id="gelfand-tsetlin-patterns-for-type-dn"><a class="header" href="#gelfand-tsetlin-patterns-for-type-dn">Gelfand-Tsetlin Patterns for Type Dn</a></h2>
+<p>A Gelfand-Tsetlin pattern for type \(D_n\) is a pyramid of all nonnegative integers or all half-integers
+\[
+\begin{array}{ccccccc}
+\lambda_{n,1} &amp;  &amp; \lambda_{n,2} &amp;  &amp; \ldots &amp;  &amp; \lambda_{n,n}\\
+&amp; \lambda_{n-1,1}^\prime &amp;  &amp; \ldots &amp;  &amp; \lambda_{n-1,n-1}^\prime\\
+&amp;  &amp; \lambda_{n-1,1} &amp;  &amp; \ldots &amp;  &amp; \lambda_{n-1,n-1}\\
+&amp;  &amp;  &amp;  &amp;  &amp; \ldots\\
+&amp;  &amp;  &amp;  &amp;  &amp; \lambda_{1,1}^\prime\\
+&amp;  &amp;  &amp;  &amp;  &amp;  &amp; \lambda_{1,1}
+\end{array}
+\]
+satisfying the interlacing conditions
+\[
+\lambda_{k,1}\geq \lambda_{k-1,1}^\prime \geq \lambda_{k,2}\geq \lambda_{k-1,2}^\prime \geq \ldots\geq \lambda_{k,k-1}\geq \lambda_{k-1,k-1}^\prime \geq \left|\lambda_{k,k}\right|
+\]
+and
+\[
+\lambda_{k,1}^\prime\geq \lambda_{k,1} \geq \lambda_{k,2}^\prime\geq \lambda_{k,2} \geq \ldots\geq \lambda_{k,k-1}\geq \lambda_{k,k}^\prime \geq \left|\lambda_{k,k}\right|.
+\]
+In Molev, Gelfand-Tsetlin patterns with negative entries and rows in decreasing order was used. However, we will not be following their convention.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="representations-of-bn-and-dn"><a class="header" href="#representations-of-bn-and-dn">Representations of Bn and Dn</a></h1>
+<pre><code>class bn.RepBn(highest_weight_numerator, denominator)
+class dn.RepDn(highest_weight_numerator, denominator)
+</code></pre>
+<p>Creates the representation object with highest weight <code>highest_weight/denominator</code> . The parity of the entries in the numerator should be the same.</p>
+<pre><code>bn.RepBn.highest_weight
+dn.RepDn.highest_weight
+</code></pre>
+<p>The highest weight of a representation object.</p>
+<pre><code>bn.RepBn.root_data
+dn.RepDn.root_data
+</code></pre>
+<p>An instance of <code>RootDatDn</code> which stores the root datum of the Lie algebra.</p>
+<pre><code>bn.RepBn.Gelfand_Tsetlin_patterns
+dn.RepDn.Gelfand_Tsetlin_patterns
+</code></pre>
+<p>The list of all Gelfand-Tsetlin patterns (as lists) for this representation.</p>
+<pre><code>bn.RepBn.patterns
+dn.RepDn.patterns
+</code></pre>
+<p>The list of all Gelfand-Tsetlin patterns (as <code>GTPattern</code> objects) for this representation.</p>
+<pre><code>bn.RepBn.get_root_vector(root, normalization = 'rational')
+dn.RepDn.get_root_vector(root, normalization = 'rational')
+</code></pre>
+<p>Returns the root vector \(E_{\alpha}\) in a Chevalley basis cooresponding to the root \(\alpha\). The root \(\alpha\) needs to be represented as a list of integer coefficients in the simple root basis. The option <code>normalization = 'rational'</code> will make the entries of root vectors rational, while the option <code>normalization = 'unitary'</code> will make the representation restricted on the maximal compact subgroup \(SO(n)\) (realized as orthogonal matrices in \(GL(n,\mathbb{C})\)) unitary. The computed root vectors are stored in the dictionary <code>an.RepAn.root_vectors_rational</code> and <code>an.RepAn.root_vectors_unitary</code>, respectively.</p>
+<p>For example,</p>
+<pre><code class="language-python">&gt; b = RepDn([3,1,1], 2)
+&gt; print(b.get_root_vector([1,1,0],&quot;unitary&quot;))
+
+Matrix([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, sqrt(15)*I/5, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 6*I/5, 0, 0, 0, -sqrt(6)/10, 0, sqrt(10)/10, 0, 0, sqrt(5)*I/5, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, sqrt(15)*I/5, 0, 0, 0], [-I/5, 0, 0, 0, -sqrt(6)/10, 0, 0, 0, 0, 0, 0, 0, 0, 0, -sqrt(10)/10, 0, 0, sqrt(5)*I/5, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, sqrt(10)/5, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, -sqrt(6)/10, 0, 0, 0, 6*I/5, 0, -sqrt(15)*I/15, 0, 0, sqrt(30)/15, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3*sqrt(10)/10, 0, 0, 0], [-sqrt(6)/10, 0, 0, 0, 3*I/10, 0, 0, 0, 0, 0, 0, 0, 0, 0, sqrt(15)*I/10, 0, 0, sqrt(30)/10, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -sqrt(6)/6, 0, 0, 0], [sqrt(10)/10, 0, 0, 0, -sqrt(15)*I/10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5*I/6, 0, 0, -sqrt(2)/6, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, sqrt(3)*I/3, 0, 0, 0], [sqrt(5)*I/5, 0, 0, 0, sqrt(30)/10, 0, 0, 0, 0, 0, 0, 0, 0, 0, sqrt(2)/6, 0, 0, 2*I/3, 0, 0], [0, sqrt(15)*I/5, 0, 0, 0, 3*sqrt(10)/10, 0, 0, 0, 0, 0, 0, 0, 0, 0, sqrt(6)/6, 0, 0, sqrt(3)*I/3, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, -sqrt(10)/10, 0, 0, 0, sqrt(15)*I/15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, sqrt(5)*I/5, 0, 0, 0, sqrt(30)/15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, sqrt(15)*I/5, 0, 0, 0, sqrt(10)/5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+
+</code></pre>
+<p>The transformation matrix from the rational form to the unitary representation is diagonal, and the diagonal elements can be computed with the method</p>
+<pre><code class="language-python">bn.RepBn.unitarization()
+dn.RepDn.unitarization()
+</code></pre>
+<p>The result of the computation is stored in the attribute <code>bn.RepBn.unitarization_matrix</code> and <code>dn.RepDn.unitarization_matrix</code>, respectively.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="matrix-element-formulas-2"><a class="header" href="#matrix-element-formulas-2">Matrix Element Formulas</a></h1>
+<p>The Lie algebra \(\mathfrak{so}(2n)\) and \(\mathfrak{so}(2n+1)\) are \(J_{2p, 2p+1}\) and \(J_{2p+1, 2p+2}\), where \(J_{i,j} = E_{i,j} - E_{j,i}, i &lt; j\). </p>
+<p>According to</p>
+<ul>
+<li>Gelfand, I. M., and M. L. Zetlin. <em>Finite-dimensional representations of the orthogonal group.</em> Math. USSR Doklady. Vol. 71. 1950,</li>
+</ul>
+<p>the generators \(J_{2p, 2p+1}\) and \(J_{2p+1, 2p+2}\) act on the Gelfand-Tsetlin basis \(\xi_\Lambda\) of the unitary representation by:
+\[
+\begin{array}{c}
+J_{2p+1,2p}\xi_\Lambda=\sum_{j=1}^{p}A_{2p-1,j}^+\xi_{\Lambda_{2p-1,j}^+}-\sum_{j=1}^{p}A_{2p-1,j}^-\xi_{\Lambda_{2p-1,j}^-}\\
+J_{2p+2,2p+1}\xi_\Lambda=\sum_{j=1}^{p}B_{2p,j}^+\xi_{\Lambda_{2p,j}^+}-\sum_{j=1}^{p}B_{2p,j}^-\xi_{\Lambda_{2p,j}^-}+iC_{2p}\xi_\Lambda
+\end{array}
+\]
+with the coefficients given by
+\[
+A_{2p-1,j}^+=\left|\frac{\prod_{r=1}^{p-1}\left(l_{2p-2,r}-l_{2p-1,j}-1\right)\left(l_{2p-2,r}+l_{2p-1,j}\right)\prod_{r=1}^{p}\left(l_{2p,r}-l_{2p-1,j}-1\right)\left(l_{2p,r}+l_{2p-1,j}\right)}{\prod_{r\neq j}\left(l_{2p-1,r}^{2}-l_{2p-1,j}^{2}\right)\left(l_{2p-1,r}^{2}-\left(l_{2p-1,j}+1\right)^{2}\right)}\right|^{1/2}
+\]
+\[
+A_{2p-1,j}^-=\left|\frac{\prod_{r=1}^{p-1}\left(l_{2p-2,r}-l_{2p-1,j}\right)\left(l_{2p-2,r}+l_{2p-1,j}-1\right)\prod_{r=1}^{p}\left(l_{2p,r}-l_{2p-1,j}\right)\left(l_{2p,r}+l_{2p-1,j}-1\right)}{\prod_{r\neq j}\left(l_{2p-1,r}^{2}-(l_{2p-1,j}-1)^{2}\right)\left(l_{2p-1,r}^{2}-l_{2p-1,j}^{2}\right)}\right|^{1/2}
+\]
+\[
+B_{2p,j}^+=\left|\frac{\prod_{r=1}^{p}\left(l_{2p-1,r}^{2}-l_{2p,j}^{2}\right)\prod_{r=1}^{p+1}\left(l_{2p+1,r}^{2}-l_{2p,j}^{2}\right)}{l_{2p,j}^{2}\left(4l_{2p,j}^{2}-1\right)\prod_{r\neq j}\left(l_{2p,r}^{2}-l_{2p,j}^{2}\right)\left(\left(l_{2p,r}-1\right)^{2}-l_{2p,j}^{2}\right)}\right|^{1/2}
+\]
+\[
+B_{2p,j}^-=\left|\frac{\prod_{r=1}^{p}\left(l_{2p-1,r}^{2}-\left(l_{2p,j}-1\right)^{2}\right)\prod_{r=1}^{p+1}\left(l_{2p+1,r}^{2}-\left(l_{2p,j}-1\right)^{2}\right)}{\left(l_{2p,j}-1\right)^{2}\left(4\left(l_{2p,j}-1\right)^{2}-1\right)\prod_{r\neq j}\left(l_{2p,r}^{2}-\left(l_{2p,j}-1\right)^{2}\right)\left(\left(l_{2p,r}-1\right)^{2}-\left(l_{2p,j}-1\right)^{2}\right)}\right|^{1/2}
+\]
+\[
+C_{2 p}=\frac{\prod_{r=1}^{p} l_{2 p-1, r} \prod_{r=1}^{p+1} l_{2 p+1, r}}{\prod_{r=1}^{p} l_{2 p, r}\left(l_{2 p, r}-1\right)}
+\]</p>
+<p>The actions of the generators on the basis elements \(\zeta_{\Lambda}\) with rational coefficients are given by:
+\[
+J_{2p, 2p+1} \zeta_{\Lambda}= \sum_{j=1}^p a_{2p-1,j}^+\zeta_{\Lambda_{2p-1,j}^+} - \sum_{j=1}^p a_{2p-1,j}^-\zeta_{\Lambda_{2p-1,j}^-}
+\]
+\[
+J_{2p+1, 2p+2} \xi_{\Lambda}= \sum_{j=1}^p b_{2p,j}^+\zeta_{\Lambda_{2p,j}^+} - \sum_{j=1}^p b_{2p,j}^-\zeta_{\Lambda_{2p,j}^-} + \sum_{j=1}^p i c_\Lambda\zeta_{\Lambda}
+\]
+with coefficients
+\[
+a_{2p-1,j}^+ = \left|\frac{\prod_{r=1}^{p-1}\left(l_{2p-2,r}+l_{2p-1,j}\right)\left(l_{2p-2,r}-l_{2p-1,j}-1\right)\prod_{r=1}^{p}\left(l_{2p,r} + l_{2p-1,j}\right)\left(l_{2p,r}-l_{2p-1,j}-1\right)}{\prod_{r=1,r\neq j}^{p}\left(l_{2p-1,r}+l_{2p-1,j}\right)\left(l_{2p-1,r}-l_{2p-1,j}\right)}\right|
+\]</p>
+<p>\[
+a_{2p-1,j}^- = \left|\frac{1}{\prod_{r=1,r\neq j}^{p}\left(l_{2p-1,r}+l_{2p-1,j}\right)\left(l_{2p-1,r}-l_{2p-1,j}\right)}\right|
+\]
+\[
+b_{\Lambda_{2p,j}^+} = \left|\frac{\prod_{r=1}^p \left(l_{2p-1,r}+l_{2p,j}\right)\prod_{r=1}^{p+1}\left(l_{2p+1,r} + l_{2p,j}\right)}{2 l_{2p,j}^2 \left(4 l_{2p,j}^2 - 1\right)\prod_{r=1,r\neq j}^p \left(l_{2p,r} - l_{2p,j}\right)\left(l_{2p,r} + l_{2p,j}-1\right)}\right|
+\]</p>
+<p>\[
+b_{\Lambda_{2p,j}^-} = \left|\frac{\prod_{r=1}^p \left(l_{2p-1,r}-l_{2p,j}+1\right)\prod_{r=1}^{p+1}\left(l_{2p+1,r} - l_{2p,j}+1\right)}{\prod_{r=1,r\neq j}^p \left(l_{2p,r} - l_{2p,j}\right)\left(l_{2p,r} + l_{2p,j} -1\right)}\right|
+\]
+\[
+c_\Lambda = \frac{\prod_{r=1}^{p}l_{2p-1,r}\prod_{r=1}^{p+1} l_{2p+1,r}}{\prod_{r=1}^{p} l_{2p,r}\left(l_{2p,r}-1\right)}
+\]</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

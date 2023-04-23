@@ -209,7 +209,9 @@ class RepDn:
         self.root_data = RootDatDn(len(hwt))
         self.Gelfand_Tsetlin_patterns = self.__GenerateAllPatterns(self.highest_weight)
         self.patterns = [GTPattern(x) for x in self.Gelfand_Tsetlin_patterns]
-        self.root_vectors = {}
+        self.pattern_order = dict(zip([self.__hsh(patt.pattern) for patt in self.patterns], range(0,len(self.patterns))))
+        self.root_vectors_rational = {}
+        self.root_vectors_unitary = {}
         
     def __range_halfint(self, *args):
         assert args[0].denominator == args[1].denominator, "should both be integer or half integer"
@@ -423,13 +425,13 @@ class RepDn:
     def libr(self, mata, matb):
         return mata * matb - matb * mata
 
-    def get_cartan(self, vec, normalization = "rational"):
+    def get_cartan(self, vec, normalization="rational"):
         if normalization == "rational":
             return functools.reduce(lambda x,y: x+y,([vec[k] * self.J2N(k) for k in range(0, len(vec))]))
         elif normalization == "unitary":
             return functools.reduce(lambda x,y: x+y,([vec[k] * self.J2(k) for k in range(0, len(vec))]))
     
-    def get_simp_rootvec(self, r, normalization = "rational", root_type = "A+B"):
+    def get_simp_rootvec(self, r, normalization="rational", root_type = "A+B"):
         if normalization == "rational":
             F1 = self.J1N
             F2 = self.J2N
@@ -460,8 +462,12 @@ class RepDn:
                 return {"type":"-A-B", "r":ln-2}
     
     
-    def get_root_vector(self, rt, normalization = "rational"):
-        storage = self.root_vectors
+    def get_root_vector(self, rt, normalization="rational"):
+        if normalization == "rational":
+            storage = self.root_vectors_rational
+        elif normalization == "unitary":
+            storage = self.root_vectors_unitary
+            
         if tuple(rt) in storage.keys():
             return storage[tuple(rt)]
         def vecpos(pos, ln):
@@ -478,12 +484,61 @@ class RepDn:
                 pos = 0
                 while list(sympy.Matrix(rt) - sympy.Matrix(vecpos(pos, len(rt)))) not in allrts:
                     pos += 1
-                val = sympy.Rational(1, sympy.I * self.root_data.get_epsilon(vecpos(pos,len(rt)), list(sympy.Matrix(rt) - sympy.Matrix(vecpos(pos, len(rt)))))* (self.root_data.get_p(vecpos(pos,len(rt)), list(sympy.Matrix(rt) - sympy.Matrix(vecpos(pos,len(rt)))))+1))*self.libr(self.get_root_vector(vecpos(pos,len(rt))), self.get_root_vector(list(sympy.Matrix(rt) - sympy.Matrix(vecpos(pos,len(rt))))))
+                val = sympy.Rational(1, self.root_data.get_epsilon(vecpos(pos,len(rt)), list(sympy.Matrix(rt) - sympy.Matrix(vecpos(pos, len(rt)))))* (self.root_data.get_p(vecpos(pos,len(rt)), list(sympy.Matrix(rt) - sympy.Matrix(vecpos(pos,len(rt)))))+1))*self.libr(self.get_root_vector(vecpos(pos,len(rt)), normalization), self.get_root_vector(list(sympy.Matrix(rt) - sympy.Matrix(vecpos(pos,len(rt)))), normalization))/sympy.I
             elif sum(rt) < 0:
                 allrts = self.root_data.root_strings
                 pos = 0
                 while list(sympy.Matrix(rt) + sympy.Matrix(vecpos(pos, len(rt)))) not in allrts:
                     pos += 1
-                val = sympy.Rational(1, sympy.I * self.root_data.get_epsilon(list(-sympy.Matrix(vecpos(pos,len(rt)))), list(sympy.Matrix(rt), sympy.Matrix(vecpos(pos,len(rt)))))* (self.root_data.get_p(list(-sympy.Matrix(vecpos(pos,len(rt)))), list(sympy.Matrix(rt) + sympy.Matrix(vecpos(pos,len(rt)))))+1))*self.libr(self.get_root_vector(list(-sympy.Matrix(vecpos(pos,len(rt))))), self.get_root_vector(list(sympy.Matrix(rt) + sympy.Matrix(vecpos(pos,len(rt))))))
+                val = sympy.Rational(1, self.root_data.get_epsilon(list(-sympy.Matrix(vecpos(pos,len(rt)))), list(sympy.Matrix(rt), sympy.Matrix(vecpos(pos,len(rt)))))* (self.root_data.get_p(list(-sympy.Matrix(vecpos(pos,len(rt)))), list(sympy.Matrix(rt) + sympy.Matrix(vecpos(pos,len(rt)))))+1))*self.libr(self.get_root_vector(list(-sympy.Matrix(vecpos(pos,len(rt)))), normalization), self.get_root_vector(list(sympy.Matrix(rt) + sympy.Matrix(vecpos(pos,len(rt)))), normalization))/sympy.I
         storage[tuple(rt)] = val
         return val
+    
+    
+    def unitarization(self):
+        allpatt = self.patterns
+        allpos = self.pattern_order
+        def legitpatt(ptt):
+            return (ptt in self.Gelfand_Tsetlin_patterns)
+        def entry_1(k, j, ptt):
+            pt1 = self.__prodlst([sympy.Rational(ptt.get_l(2*k-1,r)**2 - ptt.get_l(2*k-1,j)**2, ptt.get_l(2*k-1,r)**2 - (ptt.get_l(2*k-1,j) + 1)**2 ) for r in range(1,k+1) if r != j])
+            pt2 = self.__prodlst([(ptt.get_l(2*k-2,r) - ptt.get_l(2*k-1,j) - 1) * (ptt.get_l(2*k-2,r) + ptt.get_l(2*k-1,j)) for r in range(1,k)])
+            pt3 = self.__prodlst([(ptt.get_l(2*k,r) - ptt.get_l(2*k-1,j) - 1) * (ptt.get_l(2*k,r) + ptt.get_l(2*k-1,j)) for r in range(1,k+1)])
+            return sympy.sqrt(abs( pt1 * sympy.Rational(1, pt2 * pt3) ))
+        def entry_2(k, j, ptt):
+            pt1 = self.__prodlst([sympy.Rational(ptt.get_l(2*k-1,r)**2 - ptt.get_l(2*k-1,j)**2, ptt.get_l(2*k-1,r)**2 - (ptt.get_l(2*k-1,j) - 1)**2 ) for r in range(1,k+1) if r != j])
+            pt2 = self.__prodlst([(ptt.get_l(2*k-2,r) - ptt.get_l(2*k-1,j)) * (ptt.get_l(2*k-2,r) + ptt.get_l(2*k-1,j) - 1) for r in range(1,k)])
+            pt3 = self.__prodlst([(ptt.get_l(2*k,r) - ptt.get_l(2*k-1,j)) * (ptt.get_l(2*k,r) + ptt.get_l(2*k-1,j) - 1) for r in range(1,k+1)])
+            return sympy.sqrt(abs( pt1 * pt2 * pt3 ))
+        def entry_3(k, j, ptt):
+            pt1 = self.__prodlst([sympy.Rational((ptt.get_l(2*k,r) - ptt.get_l(2*k,j)) * (ptt.get_l(2*k,r) + ptt.get_l(2*k,j) - 1), (ptt.get_l(2*k,r) + ptt.get_l(2*k,j))*(ptt.get_l(2*k,r)-ptt.get_l(2*k,j)-1)) for r in range(1,k+1) if r != j])
+            pt2 = self.__prodlst([sympy.Rational(ptt.get_l(2*k-1,r) - ptt.get_l(2*k,j), ptt.get_l(2*k-1,r) + ptt.get_l(2*k,j)) for r in range(1,k+1)])
+            pt3 = self.__prodlst([sympy.Rational(ptt.get_l(2*k+1,r) - ptt.get_l(2*k,j), ptt.get_l(2*k+1,r) + ptt.get_l(2*k,j)) for r in range(1,k+2)])
+            return sympy.sqrt(abs( pt1 * pt2 * pt3 * 4 * (ptt.get_l(2*k, j)**2) * (4 * (ptt.get_l(2*k, j)**2) - 1)))
+        def entry_4(k, j, ptt):
+            pt1 = self.__prodlst([sympy.Rational((ptt.get_l(2*k,r) - ptt.get_l(2*k,j)) * (ptt.get_l(2*k,r) + ptt.get_l(2*k,j) - 1), (ptt.get_l(2*k,r) + ptt.get_l(2*k,j) - 2)*(ptt.get_l(2*k,r)-ptt.get_l(2*k,j)+1)) for r in range(1,k+1) if r != j])
+            pt2 = self.__prodlst([sympy.Rational(ptt.get_l(2*k-1,r) + ptt.get_l(2*k,j) - 1, ptt.get_l(2*k-1,r) - ptt.get_l(2*k,j) + 1) for r in range(1,k+1)])
+            pt3 = self.__prodlst([sympy.Rational(ptt.get_l(2*k+1,r) + ptt.get_l(2*k,j) - 1, ptt.get_l(2*k+1,r) - ptt.get_l(2*k,j) + 1) for r in range(1,k+2)])
+            return sympy.sqrt(abs( pt1 * pt2 * pt3 * sympy.Rational(1, 4 * ((ptt.get_l(2*k, j)-1)**2) * (4 * ((ptt.get_l(2*k, j)-1)**2) - 1))))
+        part1 = [(allpos[self.__hsh(ptt.pattern)], [allpos[self.__hsh(ptt.raised(2*k-1,j))] , entry_1(k, j, ptt)]) for k in range(1, len(self.highest_weight)) for j in range(1,k+1) for ptt in allpatt if legitpatt(ptt.raised(2*k-1,j))]
+        part2 = [(allpos[self.__hsh(ptt.pattern)], [allpos[self.__hsh(ptt.lowered(2*k-1,j))] , entry_2(k, j, ptt)]) for k in range(1, len(self.highest_weight)) for j in range(1,k+1) for ptt in allpatt if legitpatt(ptt.lowered(2*k-1,j))]
+        part3 = [(allpos[self.__hsh(ptt.pattern)], [allpos[self.__hsh(ptt.raised(2*k,j))] , entry_3(k, j, ptt)]) for k in range(0, len(self.highest_weight)) for j in range(1,k+1) for ptt in allpatt if legitpatt(ptt.raised(2*k,j))]
+        part4 = [(allpos[self.__hsh(ptt.pattern)], [allpos[self.__hsh(ptt.lowered(2*k,j))] , entry_4(k, j, ptt)]) for k in range(0, len(self.highest_weight)) for j in range(1,k+1) for ptt in allpatt if legitpatt(ptt.lowered(2*k,j))]
+        allrules = part1 + part2 + part3 + part4
+        allrules.sort()
+        grp = itertools.groupby(allrules, lambda x:x[0])
+        
+        hashtable = dict([(node, [x[1] for x in val]) for node, val in grp])
+        ylist = [0 for k in range(0, len(allpatt))]
+        ylist[0] = sympy.Rational(1,1)
+        def bfs(node):
+            nodelist = hashtable[node]
+            for nd in nodelist:
+                if ylist[nd[0]] == 0:
+                    ylist[nd[0] ] = ylist[node] * nd[1]
+                    bfs(nd[0])
+        bfs(0)
+        res = [1/p for p in ylist]
+        if hasattr(self, "unitarization_matrix") != True:
+            setattr(self, "unitarization_matrix", res)
+        return res

@@ -4,6 +4,7 @@ import itertools
 import functools
 import operator
 import copy
+from hashlib import sha1
 
 class RootDatAn:
     __epsilon_list = {}
@@ -240,7 +241,10 @@ class RepAn:
         self.root_data = RootDatAn(len(hwt) - 1)
         self.Gelfand_Tsetlin_patterns = self.__GenerateAllPatterns(hwt)
         self.patterns = [GTPattern(x) for x in self.Gelfand_Tsetlin_patterns]
-        self.root_vectors = {}
+        self.pattern_order = dict(zip([self.__hsh(patt.pattern) for patt in self.patterns], range(0,len(self.patterns))))
+        self.root_vectors_rational = {}
+        self.root_vectors_unitary = {}
+        
     
     def __FirstRow(self, rw):
         return rw
@@ -264,14 +268,22 @@ class RepAn:
         return patt
     
     def __hsh(self, ptt):
-        return hash(tuple([elt for q in ptt for elt in q]))
+        lst = [elt for q in ptt for elt in q]
+        return sha1(str(lst).encode()).hexdigest()
+    
+    def __prodlst(self, lst):
+        if lst != []:
+            prd = functools.reduce(lambda x,y:x*y, lst)
+        else:
+            prd = 1
+        return prd
     
     def libr(self, mata, matb):
         return mata*matb - matb*mata
     
     def E0(self, k):
         allpatt = self.patterns
-        allpos = dict(zip([self.__hsh(patt.pattern) for patt in allpatt], range(0,len(allpatt))))
+        allpos = self.pattern_order
         dictrules = dict(zip([(allpos[self.__hsh(ptt.pattern)], allpos[self.__hsh(ptt.pattern)]) for ptt in allpatt], [sum([ptt.get_lambda(k,r) for r in range(1,k+1)]) - sum([ptt.get_lambda(k-1,r) for r in range(1,k)]) for ptt in allpatt]))
         return sympy.matrices.SparseMatrix(len(allpatt),len(allpatt),dictrules)
     
@@ -280,7 +292,7 @@ class RepAn:
     
     def E2(self, k):
         allpatt = self.patterns
-        allpos = dict(zip([self.__hsh(patt.pattern) for patt in allpatt], range(0,len(allpatt))))
+        allpos = self.pattern_order
         def legitpatt(ptt):
             return (ptt in self.Gelfand_Tsetlin_patterns)
         def matrixentry(i, ptt):
@@ -297,7 +309,7 @@ class RepAn:
     
     def E3(self, k):
         allpatt = self.patterns
-        allpos = dict(zip([self.__hsh(patt.pattern) for patt in allpatt], range(0,len(allpatt))))
+        allpos = self.pattern_order
         def legitpatt(ptt):
             return (ptt in self.Gelfand_Tsetlin_patterns)
         def matrixentry(i, ptt):
@@ -317,7 +329,7 @@ class RepAn:
     
     def E0_hermitian(self, k):
         allpatt = self.patterns
-        allpos = dict(zip([self.__hsh(patt.pattern) for patt in allpatt], range(0,len(allpatt))))
+        allpos = self.pattern_order
         dictrules = dict(zip([(allpos[self.__hsh(ptt.pattern)], allpos[self.__hsh(ptt.pattern)]) for ptt in allpatt], [sum([ptt.get_lambda(k,r) for r in range(1,k+1)]) - sum(ptt.get_lambda(k-1,r) for r in range(1,k)) for ptt in allpatt]))
         return sympy.matrices.SparseMatrix(len(allpatt),len(allpatt),dictrules)
     
@@ -326,7 +338,7 @@ class RepAn:
 
     def E2_hermitian(self, k):
         allpatt = self.patterns
-        allpos = dict(zip([self.__hsh(patt.pattern) for patt in allpatt], range(0,len(allpatt))))
+        allpos = self.pattern_order
         def legitpatt(ptt):
             return (ptt in self.Gelfand_Tsetlin_patterns)
         def matrixentry(i, ptt):
@@ -347,7 +359,7 @@ class RepAn:
     
     def E3_hermitian(self, k):
         allpatt = self.patterns
-        allpos = dict(zip([self.__hsh(patt.pattern) for patt in allpatt], range(0,len(allpatt))))
+        allpos = self.pattern_order
         def legitpatt(ptt):
             return (ptt in self.Gelfand_Tsetlin_patterns)
         def matrixentry(i, ptt):
@@ -370,11 +382,12 @@ class RepAn:
         if normalization == "rational":
             F2 = self.E2
             F3 = self.E3
+            storage = self.root_vectors_rational
         elif normalization == "unitary":
             F2 = self.E2_hermitian
             F3 = self.E3_hermitian
+            storage = self.root_vectors_unitary
         
-        storage = self.root_vectors
         if tuple(rt) in storage.keys():
             return storage[tuple(rt)]
         def vecpos(pos, ln):
@@ -401,5 +414,41 @@ class RepAn:
                 val = sympy.Rational(1, self.root_data.get_epsilon(list(-sympy.Matrix(vecpos(pos,len(rt)))), list(sympy.Matrix(rt), sympy.Matrix(vecpos(pos,len(rt)))))* (self.root_data.get_p(list(-sympy.Matrix(vecpos(pos,len(rt)))), list(sympy.Matrix(rt) + sympy.Matrix(vecpos(pos,len(rt)))))+1))*self.libr(self.get_root_vector(list(-sympy.Matrix(vecpos(pos,len(rt))))), self.get_root_vector(list(sympy.Matrix(rt) + sympy.Matrix(vecpos(pos,len(rt))))))
         storage[tuple(rt)] = val
         return val
-        
+    
 
+    def unitarization(self):
+        allpatt = self.patterns
+        allpos = self.pattern_order
+        def legitpatt(ptt):
+            return (ptt in self.Gelfand_Tsetlin_patterns)
+        def entry_1(k, j, ptt):
+            part1 = self.__prodlst([sympy.Rational(ptt.get_l(k,r) - ptt.get_l(k,j), ptt.get_l(k,r) - ptt.get_l(k,j) - 1 ) for r in range(1,k+1) if r != j])
+            part2 = self.__prodlst([ptt.get_l(k-1,r) - ptt.get_l(k,j) - 1 for r in range(1,k)])
+            part3 = self.__prodlst([ptt.get_l(k+1,r) - ptt.get_l(k,j) for r in range(1,k+2)])
+            return sympy.I * sympy.sqrt( part1 * sympy.Rational(part2, part3) )
+        def entry_2(k, j, ptt):
+            part1 = self.__prodlst([sympy.Rational(ptt.get_l(k,r) - ptt.get_l(k,j), ptt.get_l(k,r) - ptt.get_l(k,j) + 1 ) for r in range(1,k+1) if r != j])
+            part2 = self.__prodlst([ptt.get_l(k+1,r) - ptt.get_l(k,j) + 1 for r in range(1,k+2)])
+            part3 = self.__prodlst([ptt.get_l(k-1,r) - ptt.get_l(k,j) for r in range(1,k)])
+            return sympy.I * sympy.sqrt( part1 * sympy.Rational(part2, part3) )
+        part1 = [(allpos[self.__hsh(ptt.pattern)], [allpos[self.__hsh(ptt.raised(k,j))] , entry_1(k, j, ptt)]) for k in range(1, len(self.highest_weight)) for j in range(1,k+1) for ptt in allpatt if legitpatt(ptt.raised(k,j))]
+        part2 = [(allpos[self.__hsh(ptt.pattern)], [allpos[self.__hsh(ptt.lowered(k,j))] , entry_2(k, j, ptt)]) for k in range(1, len(self.highest_weight)) for j in range(1,k+1) for ptt in allpatt if legitpatt(ptt.lowered(k,j))]
+        allrules = part1 + part2
+        allrules.sort()
+        grp = itertools.groupby(allrules, lambda x:x[0])
+        
+        hashtable = dict([(node, [x[1] for x in val]) for node, val in grp])
+        ylist = [0 for k in range(0, len(allpatt))]
+        ylist[0] = sympy.Rational(1,1)
+        def bfs(node):
+            nodelist = hashtable[node]
+            for nd in nodelist:
+                if ylist[nd[0]] == 0:
+                    ylist[nd[0] ] = ylist[node] * nd[1]
+                    bfs(nd[0])
+        bfs(0)
+        res = [1/p for p in ylist]
+        if hasattr(self, "unitarization_matrix") != True:
+            setattr(self, "unitarization_matrix", res)
+        return res
+    
